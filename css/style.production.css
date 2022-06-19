@@ -1,0 +1,28 @@
+/*
+* PostCSS by https://madlittlemods.github.io/postcss-css-variables/playground/  
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
+body {
+  font-family: 'Comfortaa', sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-weight: 700;
+  border-bottom: solid #0f469e 10px;
+  margin-bottom: 30px;
+  padding: 30px;
+}
+
+p {
+  margin: 10px auto;
+  max-width: 300px;
+  padding: 20px;
+  border: solid #ef6000 3px;
+  text-align: center;
+  color: #424242;
+}
