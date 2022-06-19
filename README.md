@@ -17,3 +17,7 @@ This project gets its Pokemon data from [Pokedex.org](https://pokedex.org).
 # API used
 
 *To be added*
+
+# Screenshot
+
+![screenshot](img/Screenshot.png)
