@@ -1,0 +1,29 @@
+
+
+:root {
+  --primary-color: #0f469e;
+  --accent-color: #ef6000;
+  --dark-grey: #424242;
+}
+
+
+body {
+  font-family: 'Comfortaa', sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-weight: 700;
+  border-bottom: solid var(--primary-color) 10px;
+  margin-bottom: 30px;
+  padding: 30px;
+}
+
+p {
+  margin: 10px auto;
+  max-width: 300px;
+  padding: 20px;
+  border: solid var(--accent-color) 3px;
+  text-align: center;
+  color: var(--dark-grey);
+}
