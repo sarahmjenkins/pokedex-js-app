@@ -26,3 +26,12 @@ p {
   text-align: center;
   color: #424242;
 }
+
+.filter {
+  margin: 40px auto;
+  max-width: 300px;
+  padding: 20px;
+  border: solid #0f469e 3px;
+  text-align: center;
+  color: #424242;
+}
