@@ -1,23 +1,18 @@
 // Creates the list of Pokemon that will be available in the Pokedex app. Includes IIFE from Task 1.5
 let pokemonRepository = (function () {
-  let pokemonList = [
-    {name: 'Snorlax', height: 2.1, type: ['normal']},
-    {name: 'Frillish', height: 1.2, type: ['water', 'ghost']},
-    {name: 'Cubchoo', height: 0.5, type: ['ice']},
-    {name: 'Jigglypuff', height: 0.5, type: ['fairy', 'normal']},
-    {name: 'Meganium', height: 1.8, type: ['grass']}
-  ];
+  let pokemonList = [];
+
+  // API
+  let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
   // function to return pokemonList (Task 1.5)
   function getAll() {
     return pokemonList;
   }
 
-  // function to add a pokemon to pokemonList if it is an object with the right keys (Task 1.5 bonus)
+  // function to add a pokemon to pokemonList
   function add(pokemon) {
-    if (typeof pokemon === 'object' && Object.keys(pokemon) === ['name', 'height', 'type']) { 
       pokemonList.push(pokemon);
-    }
   }
 
   // Task 1.6: create buttons with names of pokemon in pokemonList
@@ -41,7 +36,9 @@ let pokemonRepository = (function () {
   }
   
   function showDetails(pokemon) {
-    console.log(pokemon);
+    loadDetails(pokemon).then(function(){
+      console.log(pokemon);
+    });
   }
 
   // Adding filter/search functionality
@@ -49,14 +46,60 @@ let pokemonRepository = (function () {
     return pokemonList.filter(pokemon => pokemon.name.toLowerCase() === query.toLowerCase());
   }
 
+  // Task 1.7: fetches data from the API, adds each pokemon to pokemonList with add function. Each will have name and detailsUrl
+  function loadList() {
+    showLoadingMessage('Loading...');
+    return fetch(apiUrl).then(function (response) {
+      hideLoadingMessage();
+      return response.json();
+    }).then(function (json) {
+      json.results.forEach(function (item) {
+        let pokemon = {
+          name: item.name,
+          detailsUrl: item.url
+        };
+        add(pokemon);
+      });
+    }).catch(function (e) {
+      hideLoadingMessage();
+      console.error(e);
+    })
+  }
+
+  // Task 1.7: similar to loadList() function, this adds image, height, and type data for each pokemon from the API
+  function loadDetails(item){
+    showLoadingMessage('Loading...');
+    let url = item.detailsUrl;
+    // fetch(url) is shorthand for using GET method
+    return fetch(url).then(function(response){
+      hideLoadingMessage();
+      return response.json();
+    }).then(function(details){
+      item.imageUrl = details.sprites.front_default;
+      item.height = details.height;
+      item.types = details.types;
+    }).catch(function(e){
+      hideLoadingMessage();
+      console.error(e);
+    });
+  }
+
   // How to access pokemonRepository
   return {
     getAll: getAll,
     add: add,
     addListItem: addListItem,
+    loadList: loadList,
+    loadDetails: loadDetails,
     search: search
   };
 })();
+
+pokemonRepository.loadList().then(function(){
+  pokemonRepository.getAll().forEach(function(pokemon) {
+    pokemonRepository.addListItem(pokemon);
+  });
+});
 
 // Task 1.6: access pokemonRepository and create a button for each pokemon in the repository using their name
 pokemonRepository.getAll().forEach(function(pokemon) {
@@ -65,6 +108,6 @@ pokemonRepository.getAll().forEach(function(pokemon) {
 
 
 // Accesses pokemonRepository to include details on searched for pokemon
-let result = pokemonRepository.search('Jigglypuff');
-  document.write(`<p class="filter">Here is the result of your search:<br> ${result[0].name}<br>${result[0].height} meters<br>Type: ${result[0].type}</p>`);
+// let result = pokemonRepository.search('Jigglypuff');
+//   document.write(`<p class="filter">Here is the result of your search:<br> ${result[0].name}<br>${result[0].height} meters<br>Type: ${result[0].type}</p>`);
 
