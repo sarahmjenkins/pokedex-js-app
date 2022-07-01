@@ -48,9 +48,9 @@ let pokemonRepository = (function () {
 
   // Task 1.7: fetches data from the API, adds each pokemon to pokemonList with add function. Each will have name and detailsUrl
   function loadList() {
-    showLoadingMessage('Loading...');
+    // showLoadingMessage('Loading...');
     return fetch(apiUrl).then(function (response) {
-      hideLoadingMessage();
+      // hideLoadingMessage();
       return response.json();
     }).then(function (json) {
       json.results.forEach(function (item) {
@@ -61,25 +61,25 @@ let pokemonRepository = (function () {
         add(pokemon);
       });
     }).catch(function (e) {
-      hideLoadingMessage();
+      // hideLoadingMessage();
       console.error(e);
     })
   }
 
   // Task 1.7: similar to loadList() function, this adds image, height, and type data for each pokemon from the API
   function loadDetails(item){
-    showLoadingMessage('Loading...');
+    // showLoadingMessage('Loading...');
     let url = item.detailsUrl;
     // fetch(url) is shorthand for using GET method
     return fetch(url).then(function(response){
-      hideLoadingMessage();
+      // hideLoadingMessage();
       return response.json();
     }).then(function(details){
       item.imageUrl = details.sprites.front_default;
       item.height = details.height;
       item.types = details.types;
     }).catch(function(e){
-      hideLoadingMessage();
+      // hideLoadingMessage();
       console.error(e);
     });
   }
