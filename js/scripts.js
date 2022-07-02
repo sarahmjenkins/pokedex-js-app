@@ -1,21 +1,23 @@
-// Creates the list of Pokemon that will be available in the Pokedex app. Includes IIFE from Task 1.5
+// IIFE for pokemon display in pokedex
 let pokemonRepository = (function () {
   let pokemonList = [];
-
-  // API
   let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
+  let modalContainer = document.querySelector('#modal-container');
 
-  // function to return pokemonList (Task 1.5)
+  // return pokemonList
   function getAll() {
     return pokemonList;
   }
 
-  // function to add a pokemon to pokemonList
+  // add a pokemon to pokemonList
   function add(pokemon) {
+    if(typeof pokemon === 'object' && 'name' in pokemon) {
       pokemonList.push(pokemon);
-  }
+  } else {
+    console.log('Error adding pokemon');
+  }}
 
-  // Task 1.6: create buttons with names of pokemon in pokemonList
+  // create buttons with names of pokemon in pokemonList
   function addListItem(pokemon) {
     let unorderedList = document.querySelector('.pokemon-list');
     let listItem = document.createElement('li');
@@ -24,33 +26,16 @@ let pokemonRepository = (function () {
     button.classList.add('pokemon-button');
     listItem.appendChild(button);
     unorderedList.appendChild(listItem);
-    //function that logs pokemon details in console when clicked on
-    clickPokemon(button, pokemon);
+    clickPokemon(button, pokemon); //pokemon details logged to console
   }
-  
-  // Functions to create event handler that will log details of clicked on pokemon in the console
-  function clickPokemon(button, pokemon) {
-    button.addEventListener('click', function(event) {
-      showDetails(pokemon);
-    });
-  }
-  
-  function showDetails(pokemon) {
-    loadDetails(pokemon).then(function(){
-      console.log(pokemon);
-    });
-  }
-
   // Adding filter/search functionality
-  function search(query) {
-    return pokemonList.filter(pokemon => pokemon.name.toLowerCase() === query.toLowerCase());
-  }
+  // function search(query) {
+  //   return pokemonList.filter(pokemon => pokemon.name.toLowerCase() === query.toLowerCase());
+  // }
 
-  // Task 1.7: fetches data from the API, adds each pokemon to pokemonList with add function. Each will have name and detailsUrl
+  // fetches data from the API, adds pokemon to pokemonList, including name and detailsUrl
   function loadList() {
-    // showLoadingMessage('Loading...');
     return fetch(apiUrl).then(function (response) {
-      // hideLoadingMessage();
       return response.json();
     }).then(function (json) {
       json.results.forEach(function (item) {
@@ -61,51 +46,113 @@ let pokemonRepository = (function () {
         add(pokemon);
       });
     }).catch(function (e) {
-      // hideLoadingMessage();
       console.error(e);
     })
   }
 
-  // Task 1.7: similar to loadList() function, this adds image, height, and type data for each pokemon from the API
+  // fetches pokemon details (image, height, types) from API--detailsUrl
   function loadDetails(item){
-    // showLoadingMessage('Loading...');
     let url = item.detailsUrl;
-    // fetch(url) is shorthand for using GET method
     return fetch(url).then(function(response){
-      // hideLoadingMessage();
       return response.json();
     }).then(function(details){
       item.imageUrl = details.sprites.front_default;
       item.height = details.height;
       item.types = details.types;
     }).catch(function(e){
-      // hideLoadingMessage();
       console.error(e);
     });
   }
 
-  // How to access pokemonRepository
+  // log details of clicked on pokemon in the console
+  function clickPokemon(button, pokemon) {
+    button.addEventListener('click', function (event) {
+      showDetails(pokemon);
+    });
+  }
+
+  // get details of pokemon
+  function showDetails(pokemon) {
+    loadDetails(pokemon).then(function () {
+      showModal(pokemon);
+    });
+  }
+
+  // Adding modal to pokedex that shows name, image, height, types of each pokemon when clicked on
+  function showModal(pokemon) {
+    modalContainer.classList.add('is-visible');
+    modalContainer.innerHTML = '';
+    
+    let modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    // add a close button (X) that will close the modal when you click on it
+    let closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'X';
+    closeButtonElement.addEventListener('click', hideModal);
+
+    let titleElement = document.createElement('h2');
+    titleElement.innerText = pokemon.name;
+
+    let contentElement = document.createElement('p');
+    contentElement.innerHTML = `<b>height</b>: ${pokemon.height} meters <br> <b>type(s)</b>: ${pokemon.types[0]}, ${pokemon.types[1]}, ${pokemon.types[2]}`;
+
+    let pokemonImage = document.createElement('img');
+    pokemonImage.classList.add('pokemon-image');
+    pokemonImage.src = pokemon.imageUrl;
+
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(titleElement);
+    modal.appendChild(contentElement);
+    modal.appendChild(pokemonImage);
+    modalContainer.appendChild(modal);
+
+
+    modalContainer.classList.add('is-visible');
+  }
+
+  function hideModal() {
+    modalContainer.classList.remove('is-visible');
+  }
+
+
+  document.querySelector('#modal-button-test').addEventListener('click', () => {
+    showModal('Pokemon name', 'Pokemon image and details');
+  });
+
+  // closes the modal if it's open when use hits esc key
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+      hideModal();
+    }
+  });
+
+  // closes the modal if use clicks anywhere outside of it when it's open
+  modalContainer.addEventListener('click', (e) => {
+    let target = e.target;
+    if(target === modalContainer) {
+      hideModal();
+    }
+  });
+
+  // ways to access pokemonRepository outside of IIFE
   return {
     getAll: getAll,
     add: add,
     addListItem: addListItem,
     loadList: loadList,
-    loadDetails: loadDetails,
-    search: search
+    loadDetails: loadDetails
+    // search: search
   };
 })();
 
+// call function to add pokemon from API
 pokemonRepository.loadList().then(function(){
   pokemonRepository.getAll().forEach(function(pokemon) {
     pokemonRepository.addListItem(pokemon);
   });
 });
-
-// Task 1.6: access pokemonRepository and create a button for each pokemon in the repository using their name
-pokemonRepository.getAll().forEach(function(pokemon) {
- pokemonRepository.addListItem(pokemon);
-});
-
 
 // Accesses pokemonRepository to include details on searched for pokemon
 // let result = pokemonRepository.search('Jigglypuff');
