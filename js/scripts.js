@@ -92,12 +92,16 @@ let pokemonRepository = (function () {
     closeButtonElement.innerText = 'X';
     closeButtonElement.addEventListener('click', hideModal);
 
+    // add title to modal with name of pokemon
     let titleElement = document.createElement('h2');
     titleElement.innerText = pokemon.name;
 
+    // add pokemon height and types to the modal
     let contentElement = document.createElement('p');
-    contentElement.innerHTML = `<b>height</b>: ${pokemon.height} meters <br> <b>type(s)</b>: ${pokemon.types[0]}, ${pokemon.types[1]}, ${pokemon.types[2]}`;
-
+    let pokemonTypes = pokemon.types.map((item) => item.type.name).join(', ');
+    contentElement.innerHTML = `<b>height</b>: ${pokemon.height} meters<br><b>type(s)</b>: ${pokemonTypes}`;
+    
+    // add pokemon image to the modal
     let pokemonImage = document.createElement('img');
     pokemonImage.classList.add('pokemon-image');
     pokemonImage.src = pokemon.imageUrl;
