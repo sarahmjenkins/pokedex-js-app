@@ -21,17 +21,16 @@ let pokemonRepository = (function () {
   function addListItem(pokemon) {
     let unorderedList = document.querySelector('.pokemon-list');
     let listItem = document.createElement('li');
+    listItem.classList.add('group-list-item')
     let button = document.createElement('button');
     button.innerText = pokemon.name;
-    button.classList.add('pokemon-button');
+    button.classList.add('pokemon-button', 'btn', 'btn-outline-primary', 'btn-lg');
+    button.setAttribute('data-target', '#modal-container');
+    button.setAttribute('data-toggle', 'modal');
     listItem.appendChild(button);
     unorderedList.appendChild(listItem);
-    clickPokemon(button, pokemon); //pokemon details logged to console
+    clickPokemon(button, pokemon);
   }
-  // Adding filter/search functionality
-  // function search(query) {
-  //   return pokemonList.filter(pokemon => pokemon.name.toLowerCase() === query.toLowerCase());
-  // }
 
   // fetches data from the API, adds pokemon to pokemonList, including name and detailsUrl
   function loadList() {
@@ -64,7 +63,7 @@ let pokemonRepository = (function () {
     });
   }
 
-  // log details of clicked on pokemon in the console
+  // function for what happens when pokemon is clicked (showDetails will showModal of name, details, image)
   function clickPokemon(button, pokemon) {
     button.addEventListener('click', function (event) {
       showDetails(pokemon);
@@ -80,65 +79,39 @@ let pokemonRepository = (function () {
 
   // Adding modal to pokedex that shows name, image, height, types of each pokemon when clicked on
   function showModal(pokemon) {
-    modalContainer.classList.add('is-visible');
-    modalContainer.innerHTML = '';
-    
-    let modal = document.createElement('div');
-    modal.classList.add('modal');
+    // elements for different parts of the model
+    let modalTitle = document.querySelector('.modal-title');
+    let modalBody = document.querySelector('.modal-body');
 
-    // add a close button (X) that will close the modal when you click on it
-    let closeButtonElement = document.createElement('button');
-    closeButtonElement.classList.add('modal-close');
-    closeButtonElement.innerText = 'X';
-    closeButtonElement.addEventListener('click', hideModal);
+    // make sure pokemon modals are emptied between opening different ones
+    modalTitle.innerHTML = '';
+    modalBody.innerHTML = '';
 
-    // add title to modal with name of pokemon
-    let titleElement = document.createElement('h2');
-    titleElement.innerText = pokemon.name;
+    // elements for content in the model
+    // name
+    let pokemonName = document.createElement('h3');
+    pokemonName.innerText = pokemon.name;
 
-    // add pokemon height and types to the modal
-    let contentElement = document.createElement('p');
-    let pokemonTypes = pokemon.types.map((item) => item.type.name).join(', ');
-    contentElement.innerHTML = `<b>height</b>: ${pokemon.height} meters<br><b>type(s)</b>: ${pokemonTypes}`;
-    
-    // add pokemon image to the modal
+    // image
     let pokemonImage = document.createElement('img');
-    pokemonImage.classList.add('pokemon-image');
     pokemonImage.src = pokemon.imageUrl;
+    pokemonImage.classList.add('pokemon-image', 'modal-img');
+    pokemonImage.setAttribute('style', 'width=50%');
+    
+    //height
+    let pokemonHeight = document.createElement('p');
+    pokemonHeight.innerText = `height: ${pokemon.height} meters`;
 
-    modal.appendChild(closeButtonElement);
-    modal.appendChild(titleElement);
-    modal.appendChild(contentElement);
-    modal.appendChild(pokemonImage);
-    modalContainer.appendChild(modal);
+    //types
+    let pokemonTypes = document.createElement('p');
+    pokemonTypes.innerText = `type(s): ${pokemon.types.map((item) => item.type.name).join(', ') }`;
 
-
-    modalContainer.classList.add('is-visible');
+    // add pokemon-specific content to the differnet parts of the modal
+    modalTitle.appendChild(pokemonName);
+    modalBody.appendChild(pokemonImage);
+    modalBody.appendChild(pokemonHeight);
+    modalBody.appendChild(pokemonTypes);
   }
-
-  function hideModal() {
-    modalContainer.classList.remove('is-visible');
-  }
-
-
-  document.querySelector('#modal-button-test').addEventListener('click', () => {
-    showModal('Pokemon name', 'Pokemon image and details');
-  });
-
-  // closes the modal if it's open when use hits esc key
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-      hideModal();
-    }
-  });
-
-  // closes the modal if use clicks anywhere outside of it when it's open
-  modalContainer.addEventListener('click', (e) => {
-    let target = e.target;
-    if(target === modalContainer) {
-      hideModal();
-    }
-  });
 
   // ways to access pokemonRepository outside of IIFE
   return {
@@ -157,8 +130,3 @@ pokemonRepository.loadList().then(function(){
     pokemonRepository.addListItem(pokemon);
   });
 });
-
-// Accesses pokemonRepository to include details on searched for pokemon
-// let result = pokemonRepository.search('Jigglypuff');
-//   document.write(`<p class="filter">Here is the result of your search:<br> ${result[0].name}<br>${result[0].height} meters<br>Type: ${result[0].type}</p>`);
-
