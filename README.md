@@ -4,20 +4,10 @@ This project was created for Achievement 1 in CareerFoundry's Full Stack Immersi
 
 The goal of this project was to create a web application using HTML, CSS, and JavaScript that loads data from an external API. This project relies on beginniner knowledge of HTML, CSS, and JavaScript.
 
-This project gets its Pokemon data from [Pokedex.org](https://pokedex.org).
-
-# How to get the project running
-
-*To be added*
-
-# Project dependencies
-
-*To be added*
-
 # API used
 
-*To be added*
+This project uses the free [Pokemon API](https://pokeapi.co/).
 
-# Screenshot
+# Link
 
-![screenshot](img/Screenshot.png)
+This site was built in [GitHub Pages](https://sarahmjenkins.github.io/pokedex-js-app/).
